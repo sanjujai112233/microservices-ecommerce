@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using OrderService.Data;
+using OrderService.Services;
 using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +14,11 @@ builder.Host.UseSerilog();
 
 
 // Add services to the container.
+builder.Services.AddDbContext<AppDbContext>(options => 
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpClient();  //allow call one service to another
+builder.Services.AddScoped<ProductServiceClient>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
