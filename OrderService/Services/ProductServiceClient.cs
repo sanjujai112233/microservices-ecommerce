@@ -9,11 +9,15 @@ public class ProductServiceClient
         _httpClient = httpClient;
     }
 
+
+
+
     public async Task<bool> ProductExists(int productId)
     {
         var response = await _httpClient.GetAsync(
-            $"https://localhost:5001/api/product/{productId}");
-
+            $"http://localhost:5001/api/Product/{productId}");
+            
         return response.IsSuccessStatusCode;
     }
+
 }
