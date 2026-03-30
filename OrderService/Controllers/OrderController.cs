@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Reflection.Metadata.Ecma335;
 using OrderService.Dtos;
+using OrderService.Messaging;
+using OrderService.Events;
 namespace OrderService.Controllers;
 
 
@@ -16,11 +18,15 @@ public class OrderController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly ProductServiceClient _productClient;
+    private readonly EventPublisher _publisher;
 
-    public OrderController(AppDbContext context, ProductServiceClient productClient)
+    public OrderController(AppDbContext context,
+     ProductServiceClient productClient,
+     EventPublisher publisher)
     {
         _context = context;
         _productClient = productClient;
+        _publisher = publisher;
     }
 
     [HttpPost]
@@ -81,6 +87,19 @@ public class OrderController : ControllerBase
             }).ToList()
         };
 
+        var orderEvent = new OrderCreatedEvents
+        {
+          OrderId = order.Id,
+          UserId = order.UserId,
+          Items = dto.Items.Select(x=> new OrderItemEvent
+          {
+              ProductId = x.ProductId,
+              Quantitiy = x.Quantity
+          }).ToList()  
+        };
+
+        _publisher.PublishOrderCreated(orderEvent);
+
         // ✅ Step 5: Return clean response
         return Ok(response);
     }
@@ -137,8 +156,6 @@ public class OrderController : ControllerBase
         return Ok(response);
 
     }
-
-
 
 
 }
