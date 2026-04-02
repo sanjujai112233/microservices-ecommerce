@@ -1,4 +1,7 @@
 using System.Text;
+using System.Text.Json;
+using PaymentService.Events;
+using PaymentService.Services;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -6,6 +9,13 @@ namespace PaymentService.Messaging;
 
 public class EventConsumer
 {
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    public EventConsumer(IServiceScopeFactory scopeFactory)
+    {
+        _scopeFactory = scopeFactory;
+    }
+
     public void Start()
     {
         Console.WriteLine("✅ Payment Consumer Started...");
@@ -27,13 +37,24 @@ public class EventConsumer
 
         var consumer = new EventingBasicConsumer(channel);
 
-        consumer.Received += (model, ea) =>
+        consumer.Received += async (model, ea) =>
         {
             Console.WriteLine("📥 Message Received!");
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
 
             Console.WriteLine($"[PaymentService] Received: {message}");
+
+            var orderEvent = JsonSerializer.Deserialize<OrderCreatedEvent>(message);
+
+            using var scope = _scopeFactory.CreateScope();
+            var processor = scope.ServiceProvider.GetRequiredService<PaymentProcessor>();
+
+            await processor.ProcessPaymentAsync(
+                orderEvent.OrderId,
+                orderEvent.UserId,
+                amount: 1000
+            );
 
 
             Console.WriteLine("💳 Processing payment...");
