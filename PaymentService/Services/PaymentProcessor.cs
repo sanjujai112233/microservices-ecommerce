@@ -1,4 +1,6 @@
 using PaymentService.Data;
+using PaymentService.Events;
+using PaymentService.Messaging;
 using PaymentService.Models;
 
 namespace PaymentService.Services;
@@ -44,6 +46,7 @@ public class PaymentProcessor
             await _context.SaveChangesAsync();
             await dbTransection.CommitAsync();
 
+       
             Console.WriteLine($"Payment {(isSuccess ? "Sucess" : "Failed")} for Order {orderId} ");
         }
         catch(Exception ex)

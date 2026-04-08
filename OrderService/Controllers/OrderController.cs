@@ -129,14 +129,16 @@ public class OrderController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateOrderStatus(int id, string status)
+    public async Task<IActionResult> UpdateOrderStatus([FromBody] UpdateOrderDto dto)
     {
-        var order = await _context.Orders.FindAsync(id);
+         var order = await _context.Orders
+        .Include(o => o.OrderItems)
+        .FirstOrDefaultAsync(o => o.Id == dto.id);
 
         if (order == null)
             return NotFound();
 
-        order.Satus = status;
+        order.Satus = dto.status;
 
         await _context.SaveChangesAsync();
 

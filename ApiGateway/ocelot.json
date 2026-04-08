@@ -1,0 +1,83 @@
+{
+    "Routes": [
+        {
+            "DownstreamPathTemplate": "/api/auth/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5205
+                }
+            ],
+            "UpstreamPathTemplate": "/api/users/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+            ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/product/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5001
+                }
+            ],
+            "UpstreamPathTemplate": "/api/product/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+            ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/order/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5162
+                }
+            ],
+            "UpstreamPathTemplate": "/api/order/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST",
+                "PUT"
+            ]
+        },
+{
+  "DownstreamPathTemplate": "/api/payment/{everything}",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    {
+      "Host": "localhost",
+      "Port": 5170
+    }
+  ],
+  "UpstreamPathTemplate": "/api/payments/{everything}",
+  "UpstreamHttpMethod": [ "GET", "POST" ]
+},
+{
+    "DownstreamPathTemplate": "/api/notification/{everything}",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    {
+      "Host": "localhost",
+      "Port": 5201
+    }
+  ],
+  "UpstreamPathTemplate": "/api/notifications/{everything}",
+  "UpstreamHttpMethod": [ "GET", "POST" ]
+    
+}
+        
+    ],
+    "GlobalConfigration": {
+        "BaseUrl": "http://localhost:5000"
+    }
+}
